@@ -1,0 +1,38 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Authors>Francisvac</Authors>
+    <Company>Francisvac</Company>
+    <Product>ResultPattern</Product>
+    <Description>A package to implement the result pattern</Description>
+    <RepositoryUrl>https://github.com/Antsy15400/ResultPattern</RepositoryUrl>
+    <Title>ResultPattern</Title>
+    <PackageProjectUrl>https://github.com/Antsy15400/ResultPattern</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>result, pattern, aspnetcore, api, mvc</PackageTags>
+    <PackageIcon>ResultLibraryIcon-min.png</PackageIcon>
+    <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\..\Pictures\ResultLibraryIcon-min.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+  </ItemGroup>
+	
+</Project>
