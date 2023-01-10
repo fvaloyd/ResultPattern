@@ -3,13 +3,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Francisvac.Result
 {
+    /// <summary>
+    /// Result extensions methods
+    /// </summary>
     public static class Extensions
     {
         /// <summary>
         /// Convert Result of <typeparamref name="T"/> to the corresponding ActionResult.
         /// </summary>
         /// <typeparam name="T">The type that is bound to the Result.</typeparam>
-        /// <param name="result">The Result to converted</param>
+        /// <param name="result">The Result to converted.</param>
         /// <returns></returns>
         public static ActionResult ToActionResult<T>(this Result<T> result)
         {
@@ -27,9 +30,9 @@ namespace Francisvac.Result
         }
 
         /// <summary>
-        /// Convert Task<Result> to the corresponding Task<ActionResult>.
+        /// Convert Result Task to the corresponding ActionResult Task.
         /// </summary>
-        /// <param name="taskResult">The Task<Result> to converted.</param>
+        /// <param name="taskResult">The Result Task to converted.</param>
         /// <returns></returns>
         public static async Task<ActionResult> ToActionResult(this Task<Result> taskResult)
         {
@@ -39,10 +42,10 @@ namespace Francisvac.Result
         }
 
         /// <summary>
-        /// Convert Task<Result> of <typeparamref name="T"/> to the corresponding Task<ActionResult>.
+        /// Convert Result Task of <typeparamref name="T"/> to the corresponding Task of ActionResult.
         /// </summary>
         /// <typeparam name="T">The type that is bound to the Result</typeparam>
-        /// <param name="taskResult">The Task<Result> to converted.</param>
+        /// <param name="taskResult">The Task of Result to converted.</param>
         /// <returns></returns>
         public static async Task<ActionResult> ToActionResult<T>(this Task<Result<T>> taskResult)
         {
