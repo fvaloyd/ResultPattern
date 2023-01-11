@@ -2,7 +2,7 @@
 
 A library to implement the result pattern.
 
-You can find the package [here]("https://www.nuget.org/packages/Francisvac.Result").
+You can find the package [here](https://www.nuget.org/packages/Francisvac.Result).
 
 ## Problem
 
@@ -117,4 +117,4 @@ More statuses will be added to the Result and support for minimal APIs coming so
 
 ## License
 
-License [MIT]("https://github.com/Antsy15400/ResultPattern/blob/master/LICENSE").
+[MIT license](https://github.com/Antsy15400/ResultPattern/blob/master/LICENSE.txt).
