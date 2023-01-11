@@ -2,7 +2,7 @@
 
 A library to implement the result pattern.
 
-You can find the package <a href="https://www.nuget.org/packages/Francisvac.Result" target="_blank">here.</a>
+You can find the package [here]("https://www.nuget.org/packages/Francisvac.Result").
 
 ## Problem
 
