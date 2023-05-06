@@ -1,114 +1,113 @@
-﻿using System;
-
-namespace Francisvac.Result
+﻿namespace Francisvac.Result;
+public readonly record struct Result : IResult
 {
-    public class Result
-    {
-        /// <summary>
-        /// Get the Response linked to Result.
-        /// </summary>
-        public Response Response { get; protected set; }
+    /// <summary>
+    /// Get the strategy to create the corresponding ObjectResult.
+    /// </summary>
+    public HttpResponseStrategy HttpResponseStrategy { get; }
 
-        /// <summary>
-        /// Get the handler in charge of creating the corresponding ObjectResult.
-        /// </summary>
-        public HttpHandler HttpHandler { get; protected set; } = null!;
+    /// <summary>
+    /// Get the current state of the Result.
+    /// </summary>
+    public bool IsSuccess { get; }
 
-        /// <summary>
-        /// Get the current state of the Result.
-        /// </summary>
-        public bool IsSuccess { get; protected set; }
+    public ResultStatus Status { get; }
+    public string Message { get; }
+    private Result(string message, ResultStatus status, bool isSuccess, HttpResponseStrategy httpResponseStrategy)
+        => (Message, Status, IsSuccess, HttpResponseStrategy) = (message, status, isSuccess, httpResponseStrategy);
 
-        public Result() { }
+    /// <summary>
+    /// Create a Error result.
+    /// </summary>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A error Result</returns>
+    public static Result Error(string message)
+        => new(message, ResultStatus.Error, false, new BadRequestHttpResponseStrategy(message));
 
-        public Result(Response response) => Response = response;
+    /// <summary>
+    /// Create a NotFound Result.
+    /// </summary>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A notfound Result</returns>
+    public static Result NotFound(string message)
+        => new(message, ResultStatus.NotFound, false, new NotFoundHttpResponseStrategy(message));
 
-        public Result(Response response, HttpHandler httpHandler)
+    /// <summary>
+    /// Create a success Result.
+    /// </summary>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A success Result</returns>
+    public static Result Success(string message)
+        => new(message, ResultStatus.Success, true, new OkHttpResponseStrategy(message: message));
+
+    public static implicit operator Result(ResultStatus status)
+        => status switch
         {
-            Response = response;
-            HttpHandler = httpHandler;
-        }
+            ResultStatus.Error => Error("An error occured."),
+            ResultStatus.NotFound => NotFound("Resource not found."),
+            ResultStatus.Success => Success("Operation succeded."),
+            _ => throw new InvalidResultStatusException()
+        };
+}
 
-        /// <summary>
-        /// Set the handler in charge of creating the ObjectResult.
-        /// </summary>
-        /// <param name="httpHandler">Handler in charge of creating the corresponding ObjectResult.</param>
-        public void SetHandler(HttpHandler httpHandler)
+public readonly record struct Result<TData> : IResult<TData>
+{
+    /// <summary>
+    /// The data that is bound to the Result.
+    /// </summary>
+    public TData Data { get; }
+
+    /// <summary>
+    /// Get the strategy to create the corresponding ObjectResult.
+    /// </summary>
+    public HttpResponseStrategy HttpResponseStrategy { get; }
+
+    /// <summary>
+    /// Get the current state of the Result.
+    /// </summary>
+    public bool IsSuccess { get; }
+
+    public ResultStatus Status { get; }
+    public string Message { get; }
+
+    private Result(TData data, string message, ResultStatus status, bool isSuccess, HttpResponseStrategy httpResponseStrategy)
+        => (Data, Message, Status, IsSuccess, HttpResponseStrategy) = (data, message, status, isSuccess, httpResponseStrategy);
+
+    /// <summary>
+    /// Create a Success Result.
+    /// </summary>
+    /// <param name="data">The data that is bound to the Result.</param>
+    /// <param name="message"></param>
+    /// <returns>A Success Result of <typeparamref name="TData"/></returns>
+    public static Result<TData> Success(TData data = default!, string message = "")
+        => data switch
         {
-            HttpHandler = httpHandler;
-        }
+            null => new(default!, message, ResultStatus.Success, true, new OkHttpResponseStrategy(message: message)),
+            _ => new(data, message, ResultStatus.Success, true, new OkHttpResponseStrategy(data))
+        };
 
-        /// <summary>
-        /// Create a Response that implicitly casts to an Error Result.
-        /// </summary>
-        /// <param name="message">A message that gives information about the reason for the status of the result.</param>
-        /// <returns>A error Response</returns>
-        public static Response Error(string message)
-            => new Response(ResultStatus.Error, message);
+    public static Result<TData> Error(string message)
+        => new(default!, message, ResultStatus.Error, false, new BadRequestHttpResponseStrategy(message));
 
-        /// <summary>
-        /// Create a Response that implicitly casts to an NotFound Result.
-        /// </summary>
-        /// <param name="message">A message that gives information about the reason for the status of the result.</param>
-        /// <returns>A notfound Response</returns>
-        public static Response NotFound(string message)
-            => new Response(ResultStatus.NotFound, message);
+    public static Result<TData> NotFound(string message)
+        => new(default!, message, ResultStatus.NotFound, false, new NotFoundHttpResponseStrategy(message));
 
-        /// <summary>
-        /// Create a Response that implicitly casts to an Success Result.
-        /// </summary>
-        /// <param name="message">A message that gives information about the reason for the status of the result.</param>
-        /// <returns>A success Response</returns>
-        public static Response Success(string message)
-            => new Response(ResultStatus.Success, message);
+    public static implicit operator TData(Result<TData> result)
+        => result.Data;
 
-        public static implicit operator Result(Response response) =>
-                response.ResultStatus switch
-                {
-                    ResultStatus.Error => new Result(response, new ErrorHandler(response.Message)),
-                    ResultStatus.NotFound => new Result(response, new NotFoundHandler(response.Message)),
-                    ResultStatus.Success => new Result(response, new SuccessHandler(null!, response.Message)) { IsSuccess = true},
-                    _ => throw new InvalidOperationException()
-                };
-    }
+    public static implicit operator Result<TData>(TData data)
+        => data switch
+        {
+            null => Error("Data is null."),
+            _ => Success(data, string.Empty)
+        };
 
-    public class Result<TData> : Result
-    {
-        /// <summary>
-        /// The data that is bound to the Result.
-        /// </summary>
-        public TData Data { get; set; } = default!;
-
-        public Result() { }
-
-        public Result(TData data, Response response)
-            : base(response) => Data = data;
-
-        public Result(TData data, Response response, HttpHandler httpHandler)
-            : base(response, httpHandler) => Data = data;
-
-        /// <summary>
-        /// Create a Success Result.
-        /// </summary>
-        /// <param name="data">The data that is bound to the Result.</param>
-        /// <param name="message">A message that gives information about the reason for the status of the result.</param>
-        /// <returns>A Success Result of <typeparamref name="TData"/></returns>
-        public static Result<TData> Success(TData data, string message = "")
-            => new Result<TData>(data, new Response(ResultStatus.Success, message), new SuccessHandler(data, message)) { IsSuccess = true };
-
-        public static implicit operator TData(Result<TData> result)
-            => result.Data;
-
-        public static implicit operator Result<TData>(TData data)
-            => new Result<TData>(data, new Response(ResultStatus.Success, string.Empty), new SuccessHandler(data, string.Empty)) { IsSuccess = true};
-
-        public static implicit operator Result<TData>(Response response) =>
-            response.ResultStatus switch
-            {
-                ResultStatus.Error => new Result<TData>(default!, response, new ErrorHandler(response.Message)),
-                ResultStatus.NotFound => new Result<TData>(default!, response, new NotFoundHandler(response.Message)),
-                ResultStatus.Success => new Result<TData>(default!, response, new SuccessHandler(null!, response.Message)),
-                _ => throw new InvalidOperationException()
-            };
-    }
+    public static implicit operator Result<TData>(Result result)
+        => result.Status switch
+        {
+            ResultStatus.Success => Success(default!, result.Message),
+            ResultStatus.Error => Error(result.Message),
+            ResultStatus.NotFound => NotFound(result.Message),
+            _ => throw new InvalidResultStatusException()
+        };
 }

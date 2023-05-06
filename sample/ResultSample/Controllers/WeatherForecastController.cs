@@ -1,10 +1,8 @@
 ﻿using Francisvac.Result;
-
-using Microsoft.AspNetCore.Mvc;
 using ResultSample.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ResultSample.Controllers;
-
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
 {

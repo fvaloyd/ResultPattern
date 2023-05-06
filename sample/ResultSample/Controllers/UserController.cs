@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ResultSample.Services;
 
 namespace ResultSample.Controllers;
-
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
@@ -21,5 +20,5 @@ public class UserController : ControllerBase
     public ActionResult DeleteUser(int userId) => _service.DeleteUser(userId).ToActionResult();
 
     [HttpPost]
-    public ActionResult AddUser(User user) => _service.AddUser(user).ToActionResult();
+    public ActionResult AddUser(User? user) => _service.AddUser(user).ToActionResult();
 }
