@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Francisvac.Result;
+namespace Francisvac.Result.AspNetCore;
 public abstract class HttpResponseStrategy
 {
     protected HttpResponseStrategy(string message)
@@ -16,9 +16,9 @@ public class OkHttpResponseStrategy : HttpResponseStrategy
         : base(message) { Data = data; }
     public override ActionResult CreateObjectResult()
     {
-        if (string.IsNullOrEmpty(Message))
+        if (Data is not null)
             return new OkObjectResult(Data);
-        return new OkObjectResult(new {Message});
+        return new OkObjectResult(Message ?? "");
     }
 }
 

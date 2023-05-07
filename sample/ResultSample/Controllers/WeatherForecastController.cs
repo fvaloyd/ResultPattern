@@ -1,4 +1,4 @@
-﻿using Francisvac.Result;
+﻿using Francisvac.Result.AspNetCore;
 using ResultSample.Services;
 using Microsoft.AspNetCore.Mvc;
 

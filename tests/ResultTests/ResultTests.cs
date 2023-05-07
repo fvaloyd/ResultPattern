@@ -1,3 +1,5 @@
+using Francisvac.Result.AspNetCore;
+
 namespace ResultTests;
 public class ResultTests
 {
@@ -32,33 +34,6 @@ public class ResultTests
     }
 
     [Fact]
-    public void HttpResponseStrategy_ShouldBeBadRequestResponseStrategy_WhenErrorResultIsCreated()
-    {
-        Result result = Result.Error("Test");
-        Result<int> resultGeneric = Result<int>.Error("");
-        Assert.Equal(typeof(BadRequestHttpResponseStrategy), result.HttpResponseStrategy.GetType());
-        Assert.Equal(typeof(BadRequestHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
-    }
-
-    [Fact]
-    public void HttpResponseStrategy_ShouldBeNotFoundResponseStrategy_WhenNotFoundResultIsCreated()
-    {
-        Result result = Result.NotFound("Test");
-        Result<int> resultGeneric = Result<int>.NotFound("");
-        Assert.Equal(typeof(NotFoundHttpResponseStrategy), result.HttpResponseStrategy.GetType());
-        Assert.Equal(typeof(NotFoundHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
-    }
-
-    [Fact]
-    public void HttpResponseStrategy_ShouldBeOkHttpResponseStrategy_WhenSuccessResultIsCreated()
-    {
-        Result result = Result.Success("Test");
-        Result<int> resultGeneric = Result<int>.Success(15, "");
-        Assert.Equal(typeof(OkHttpResponseStrategy), result.HttpResponseStrategy.GetType());
-        Assert.Equal(typeof(OkHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
-    }
-
-    [Fact]
     public void ResultGeneric_WithSuccessStatus_ShouldReturnAResultWithSomeData()
     {
         Result<Data> result = Result<Data>.Success(DATA, string.Empty);
@@ -82,7 +57,6 @@ public class ResultTests
         Assert.True(result.IsSuccess);
         Assert.Equal(DATA, result.Data);
         Assert.Equal(ResultStatus.Success, result.Status);
-        Assert.Equal(typeof(OkHttpResponseStrategy), result.HttpResponseStrategy.GetType());
     }
 
     [Fact]
