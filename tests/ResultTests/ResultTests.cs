@@ -1,143 +1,120 @@
 namespace ResultTests;
-
 public class ResultTests
 {
-    public record Data(string Some);
+    record Data(string Some);
+    readonly Data DATA = new("Test");
+
     [Fact]
     public void IsSuccess_ShouldBeFalse_WhenErrorResultIsCreated()
     {
         Result result = Result.Error("Test");
-
+        Result<int> resultGeneric = Result<int>.Error("");
         Assert.False(result.IsSuccess);
+        Assert.False(resultGeneric.IsSuccess);
     }
 
     [Fact]
     public void IsSuccess_ShouldBeFalse_WhenNotFoundResultIsCreated()
     {
         Result result = Result.NotFound("Test");
-
+        Result<int> resultGeneric = Result<int>.NotFound("");
         Assert.False(result.IsSuccess);
+        Assert.False(resultGeneric.IsSuccess);
     }
 
     [Fact]
     public void IsSuccess_ShouldBeTrue_WhenSuccessResultIsCreated()
     {
         Result result = Result.Success("Test");
-
+        Result<int> resultGeneric = Result<int>.Success(11, "");
         Assert.True(result.IsSuccess);
+        Assert.True(resultGeneric.IsSuccess);
     }
-    
+
     [Fact]
-    public void HttpHandler_ShouldBeErrorHandler_WhenErrorResultIsCreated()
+    public void HttpResponseStrategy_ShouldBeBadRequestResponseStrategy_WhenErrorResultIsCreated()
     {
         Result result = Result.Error("Test");
-
-        Assert.Equal(typeof(ErrorHandler), result.HttpHandler.GetType());
+        Result<int> resultGeneric = Result<int>.Error("");
+        Assert.Equal(typeof(BadRequestHttpResponseStrategy), result.HttpResponseStrategy.GetType());
+        Assert.Equal(typeof(BadRequestHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
     }
 
     [Fact]
-    public void HttpHandler_ShouldBeNotFoundHandler_WhenNotFoundResultIsCreated()
+    public void HttpResponseStrategy_ShouldBeNotFoundResponseStrategy_WhenNotFoundResultIsCreated()
     {
         Result result = Result.NotFound("Test");
-
-        Assert.Equal(typeof(NotFoundHandler), result.HttpHandler.GetType());
+        Result<int> resultGeneric = Result<int>.NotFound("");
+        Assert.Equal(typeof(NotFoundHttpResponseStrategy), result.HttpResponseStrategy.GetType());
+        Assert.Equal(typeof(NotFoundHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
     }
 
     [Fact]
-    public void HttpHandler_ShouldBeSuccess_WhenSuccessResultIsCreated()
+    public void HttpResponseStrategy_ShouldBeOkHttpResponseStrategy_WhenSuccessResultIsCreated()
     {
         Result result = Result.Success("Test");
-
-        Assert.Equal(typeof(SuccessHandler), result.HttpHandler.GetType());
-    }
-
-    [Theory]
-    [InlineData(ResultStatus.NotFound)]
-    [InlineData(ResultStatus.Error)]
-    [InlineData(ResultStatus.Success)]
-    public void Result_ShouldCastGenericResultFromResponse(ResultStatus status)
-    {
-        Result result = new Response(status, "");
-
-        Assert.NotNull(result);
-        Assert.Equal(status, result.Response.ResultStatus);
+        Result<int> resultGeneric = Result<int>.Success(15, "");
+        Assert.Equal(typeof(OkHttpResponseStrategy), result.HttpResponseStrategy.GetType());
+        Assert.Equal(typeof(OkHttpResponseStrategy), resultGeneric.HttpResponseStrategy.GetType());
     }
 
     [Fact]
-    public void SuccessGeneric_ShouldReturnAResultWithSomeData()
+    public void ResultGeneric_WithSuccessStatus_ShouldReturnAResultWithSomeData()
     {
-        Result<Data> result = Result<Data>.Success(new Data("Test"));
+        Result<Data> result = Result<Data>.Success(DATA, string.Empty);
+        Assert.NotNull(result.Data);
+        Assert.Equal(DATA, result.Data);
+    }
 
+    [Fact]
+    public void ResultGeneric_ShouldCastDataFromResult()
+    {
+        Data rData = Result<Data>.Success(DATA, "");
+        Assert.NotNull(rData);
+        Assert.Equal(DATA, rData);
+    }
+
+    [Fact]
+    public void ResultGeneric_ShouldCastSuccessResultFromData()
+    {
+        Result<Data> result = DATA;
         Assert.NotNull(result.Data);
         Assert.True(result.IsSuccess);
-        Assert.Equal(ResultStatus.Success, result.Response.ResultStatus);
-        Assert.Equal(typeof(SuccessHandler), result.HttpHandler.GetType());
-    }
-
-    [Fact]
-    public void GenericResult_ShouldCastDataFromResult()
-    {
-        Result<Data> result = Result<Data>.Success(new Data("Test"));
-
-        Data data = result;
-
-        Assert.NotNull(data);
-        Assert.Equal("Test", data.Some);
-    }
-    
-    [Fact]
-    public void GenericResult_ShouldCastDataResultFromData()
-    {
-        Data data = new("Test");
-
-        Result<Data> result = data;
-
-        Assert.NotNull(result.Data);
-        Assert.True(result.IsSuccess);
-        Assert.Equal(ResultStatus.Success, result.Response.ResultStatus);
-        Assert.Equal(typeof(SuccessHandler), result.HttpHandler.GetType());
-    }
-    
-    [Theory]
-    [InlineData(ResultStatus.NotFound)]
-    [InlineData(ResultStatus.Error)]
-    [InlineData(ResultStatus.Success)]
-    public void GenericResult_ShouldCastGenericResultFromResponse(ResultStatus status)
-    {
-        Result<Data> result = new Response(status, "");
-
-        Assert.NotNull(result);
-        Assert.Null(result.Data);
-        Assert.Equal(status, result.Response.ResultStatus);
+        Assert.Equal(DATA, result.Data);
+        Assert.Equal(ResultStatus.Success, result.Status);
+        Assert.Equal(typeof(OkHttpResponseStrategy), result.HttpResponseStrategy.GetType());
     }
 
     [Fact]
     public void ToActionResult_ShouldReturnBadRequestObjectResult_WhenResultIsError()
     {
-        Result result = Result.Error("Test error");
-
+        Result result = Result.Error("Test");
+        Result<Data> resultGeneric = Result<Data>.Error("");
         ActionResult actResult = result.ToActionResult();
-
+        ActionResult actResultGeneric = resultGeneric.ToActionResult();
         Assert.IsType<BadRequestObjectResult>(actResult);
+        Assert.IsType<BadRequestObjectResult>(actResultGeneric);
     }
-    
+
     [Fact]
     public void ToActionResult_ShouldReturnNotFoundObjectResult_WhenResultIsNotFound()
     {
-        Result result = Result.NotFound("Test notfound");
-
+        Result result = Result.NotFound("Test");
+        Result<Data> resultGeneric = Result<Data>.NotFound("Test");
         ActionResult actResult = result.ToActionResult();
-
+        ActionResult actResultGeneric = resultGeneric.ToActionResult();
         Assert.IsType<NotFoundObjectResult>(actResult);
+        Assert.IsType<NotFoundObjectResult>(actResultGeneric);
     }
-    
+
     [Fact]
     public void ToActionResult_ShouldReturnOkObjectResult_WhenResultIsSuccess()
     {
-        Result result = Result.Success("Test success");
-
+        Result result = Result.Success("Test");
+        Result<Data> resultGeneric = Result<Data>.Success(DATA, "Test");
         ActionResult actResult = result.ToActionResult();
-
+        ActionResult actResultGeneric = resultGeneric.ToActionResult();
         Assert.IsType<OkObjectResult>(actResult);
+        Assert.IsType<OkObjectResult>(actResultGeneric);
     }
 }

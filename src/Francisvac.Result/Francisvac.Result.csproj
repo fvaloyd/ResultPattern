@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <Authors>Francisvac</Authors>
     <Company>Francisvac</Company>
@@ -16,12 +16,14 @@
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <Version>1.0.3</Version>
-    <PackageReleaseNotes>Update README file</PackageReleaseNotes>
+    <Version>2.0.1</Version>
+    <PackageReleaseNotes>
+      Re-write the entire library to improve performance and behaviour consistency.
+    </PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\..\..\..\..\Pictures\ResultLibraryIcon-min.png">
+    <None Include="C:\Users\franc\.nuget\packages\francisvac.result\1.0.4\ResultLibraryIcon-min.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
