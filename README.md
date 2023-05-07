@@ -99,6 +99,8 @@ public async Task<Result> AddProductAsync(int productId, int storeId, string use
     return Result.Success("The product was added to the cart successfully.");
 }
 ```
+> note: As of version 2.1.0 you must to `using Francisvac.Result.AspNetCore` in order to use the `ToActionResult()` extension method.
+
 As you can see, we change the signature of the method, instead of returning a boolean value, we return a result. Then in each part of the code where we must return for whatever reason, whether there was an error or the operation completed successfully, we return a Result with the corresponding state and add a comment describing that state.
 
 Now let's see what the endpoint code would look like:
