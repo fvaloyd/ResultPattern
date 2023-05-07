@@ -2,9 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace Francisvac.Result;
-/// <summary>
-/// Result extensions methods
-/// </summary>
 public static class ResultExtensions
 {
     /// <summary>

@@ -2,17 +2,25 @@
 public readonly record struct Result : IResult
 {
     /// <summary>
-    /// Get the strategy to create the corresponding ObjectResult.
+    /// The strategy to create the corresponding ObjectResult.
     /// </summary>
     public HttpResponseStrategy HttpResponseStrategy { get; }
 
     /// <summary>
-    /// Get the current state of the Result.
+    /// The state of the result.
     /// </summary>
     public bool IsSuccess { get; }
 
+    /// <summary>
+    /// The status of the result.
+    /// </summary>
     public ResultStatus Status { get; }
+
+    /// <summary>
+    /// A message that gives information about the reason for the status of the result.
+    /// </summary>
     public string Message { get; }
+
     private Result(string message, ResultStatus status, bool isSuccess, HttpResponseStrategy httpResponseStrategy)
         => (Message, Status, IsSuccess, HttpResponseStrategy) = (message, status, isSuccess, httpResponseStrategy);
 
@@ -58,27 +66,34 @@ public readonly record struct Result<TData> : IResult<TData>
     public TData Data { get; }
 
     /// <summary>
-    /// Get the strategy to create the corresponding ObjectResult.
+    /// The strategy to create the corresponding ObjectResult.
     /// </summary>
     public HttpResponseStrategy HttpResponseStrategy { get; }
 
     /// <summary>
-    /// Get the current state of the Result.
+    /// The state of the result.
     /// </summary>
     public bool IsSuccess { get; }
 
+    /// <summary>
+    /// The status of the result.
+    /// </summary>
     public ResultStatus Status { get; }
+
+    /// <summary>
+    /// A message that gives information about the reason for the status of the result.
+    /// </summary>
     public string Message { get; }
 
     private Result(TData data, string message, ResultStatus status, bool isSuccess, HttpResponseStrategy httpResponseStrategy)
         => (Data, Message, Status, IsSuccess, HttpResponseStrategy) = (data, message, status, isSuccess, httpResponseStrategy);
 
     /// <summary>
-    /// Create a Success Result.
+    /// Create a Success Result of <typeparamref name="TData"/>.
     /// </summary>
     /// <param name="data">The data that is bound to the Result.</param>
-    /// <param name="message"></param>
-    /// <returns>A Success Result of <typeparamref name="TData"/></returns>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A Success Result of <typeparamref name="TData"/>.</returns>
     public static Result<TData> Success(TData data = default!, string message = "")
         => data switch
         {
@@ -86,9 +101,19 @@ public readonly record struct Result<TData> : IResult<TData>
             _ => new(data, message, ResultStatus.Success, true, new OkHttpResponseStrategy(data))
         };
 
+    /// <summary>
+    /// Create a Error Result.
+    ///</summary>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A BadRequest Result of <typeparamref name="TData"/>.</returns>
     public static Result<TData> Error(string message)
         => new(default!, message, ResultStatus.Error, false, new BadRequestHttpResponseStrategy(message));
 
+    /// <summary>
+    /// Create a NotFound Result.
+    ///</summary>
+    /// <param name="message">A message that gives information about the reason for the status of the result.</param>
+    /// <returns>A NotFound Result of <typeparamref name="TData"/>.</returns>
     public static Result<TData> NotFound(string message)
         => new(default!, message, ResultStatus.NotFound, false, new NotFoundHttpResponseStrategy(message));
 

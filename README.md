@@ -6,7 +6,7 @@ You can find the package [here](https://www.nuget.org/packages/Francisvac.Result
 
 ## Problem
 
-It is very common to see the following problem:
+It is very common to see the following situation:
 
 ```cs
 public async Task<bool> AddProductAsync(int productId, int storeId, string userId)
