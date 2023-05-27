@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Francisvac.Result.AspNetCore;
@@ -8,7 +7,7 @@ public static class AspNetCoreExtensions
     {
         HttpResponseStrategy strategy = result.Status switch
         {
-            ResultStatus.Success => new OkHttpResponseStrategy(result.Data, result.Message),
+            ResultStatus.Success => new OkHttpResponseStrategy(result.Data!, result.Message),
             ResultStatus.Error => new BadRequestHttpResponseStrategy(result.Message),
             ResultStatus.NotFound => new NotFoundHttpResponseStrategy(result.Message),
             _ => throw new InvalidResultStatusException()
@@ -33,7 +32,7 @@ public static class AspNetCoreExtensions
         var r = await taskResult;
         HttpResponseStrategy strategy = r.Status switch
         {
-            ResultStatus.Success => new OkHttpResponseStrategy(r.Data, r.Message),
+            ResultStatus.Success => new OkHttpResponseStrategy(r.Data!, r.Message),
             ResultStatus.Error => new BadRequestHttpResponseStrategy(r.Message),
             ResultStatus.NotFound => new NotFoundHttpResponseStrategy(r.Message),
             _ => throw new InvalidResultStatusException()

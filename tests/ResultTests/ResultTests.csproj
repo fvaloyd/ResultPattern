@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Francisvac.Result\Francisvac.Result.csproj" />
+    <ProjectReference Include="..\..\src\Francisvac.Result.AspNetCore\Francisvac.Result.AspNetCore.csproj" />
   </ItemGroup>
 
 </Project>
