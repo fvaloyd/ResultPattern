@@ -40,7 +40,7 @@ public class UserService
 
     public Result AddUser(User? user)
     {
-        if (user is null) return Result.Error("Invalid user");
+        if (user is null || user.Id <= 0) return Result.Error("Invalid user");
         if (_users.Any(u => u.Name == user.Name) || _users.Any(u => u.Id == user.Id)) return Result.NotFound("User already exist");
         if (user.Name.Length < 4) return Result.Error("Invalid username");
         if (user.Age < 18) return Result.Error("Could not add a minor");
